@@ -1,19 +1,19 @@
-import { GetServerSideProps, GetStaticProps } from "next";
-import Head from "next/head";
+import { GetStaticProps } from 'next'
+import Head from 'next/head'
 
-import SubscribeButton from "../components/SubscribeButton";
-import { stripe } from "../services/stripe";
+import SubscribeButton from '../components/SubscribeButton'
+import { stripe } from '../services/stripe'
 
-import styles from "./home.module.scss";
+import styles from './home.module.scss'
 
 interface IHomeProps {
   product: {
-    priceId: string;
-    amount: number;
-  };
+    priceId: string
+    amount: number
+  }
 }
 
-export default function Home({ product }: IHomeProps) {
+export default function Home({ product }: IHomeProps): JSX.Element {
   return (
     <>
       <Head>
@@ -38,24 +38,24 @@ export default function Home({ product }: IHomeProps) {
         <img src="/images/avatar.svg" alt="Girl coding" />
       </main>
     </>
-  );
+  )
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const price = await stripe.prices.retrieve("price_1J1C5dCaa3t9z6KQB6yJzv0a");
+  const price = await stripe.prices.retrieve('price_1J1C5dCaa3t9z6KQB6yJzv0a')
 
   const product = {
     priceId: price.id,
-    amount: new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: price.currency,
-    }).format(price.unit_amount / 100),
-  };
+    amount: new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: price.currency
+    }).format(price.unit_amount / 100)
+  }
 
   return {
     props: {
-      product,
+      product
     },
-    revalidate: 60 * 60 * 24 //24 horas
-  };
-};
+    revalidate: 60 * 60 * 24 // 24 horas
+  }
+}
