@@ -1,6 +1,7 @@
 import { signIn, useSession } from 'next-auth/client'
 import { useCallback } from 'react'
 
+import { useRouter } from 'next/router'
 import { getStripeJS } from '../../services/stripe-js'
 import { api } from '../../services/api'
 
@@ -14,10 +15,16 @@ export function SubscribeButton({
   priceId
 }: ISubscribeButtonProps): JSX.Element {
   const [session] = useSession()
+  const { push } = useRouter()
 
   const handleSubscribe = useCallback(async () => {
     if (!session) {
       signIn('github')
+      return
+    }
+
+    if (session.activeSubscription) {
+      push('/posts')
       return
     }
 
@@ -31,7 +38,7 @@ export function SubscribeButton({
       // eslint-disable-next-line no-alert
       alert(error.message)
     }
-  }, [priceId, session])
+  }, [priceId, push, session])
 
   return (
     <button
